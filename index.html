@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valentine?</title>
+  <style>
+    /* Global CSS Variables & Golden Ratio */
+    :root {
+      --golden: 1.618;
+      --bg-gradient-start: #ff9a9e;
+      --bg-gradient-end: #fad0c4;
+      --button-bg: #ff6f61;
+      --button-hover: #ff3b2e;
+      --button-text: #ffffff;
+      --font-family: 'Arial', sans-serif;
+    }
+
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: #333;
+      overflow: hidden; /* Prevent scrolling */
+    }
+    .page {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 1s;
+      padding: 1em;
+      box-sizing: border-box;
+    }
+    .active {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Form Styling for Page 1 */
+    form {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 2em;
+      border-radius: 1em;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"],
+    select {
+      padding: 0.5em;
+      margin: 0.5em;
+      border: 2px solid #ccc;
+      border-radius: 0.5em;
+      font-size: 1em;
+    }
+    button.submit-btn {
+      padding: 0.5em 1em;
+      font-size: 1em;
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: none;
+      border-radius: 0.5em;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    button.submit-btn:hover {
+      background: var(--button-hover);
+      transform: scale(1.05);
+    }
+
+    /* Button Row for Page 2 */
+    .button-row {
+      display: flex;
+      width: 100%;
+      max-width: 800px;
+      gap: 1em;
+      margin-top: 1em;
+    }
+    .button-cell {
+      flex: 1;
+      transition: flex-grow 0.5s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* Action Button Styling */
+    .action-button {
+      width: 100%;
+      /* Force a squarish rectangle – using aspect-ratio (modern browsers) */
+      aspect-ratio: 2.5 / 1;
+      font-size: calc(1em + 0.5vw);
+      padding: 0.5em;
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: none;
+      border-radius: 0.5em;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .action-button:hover {
+      background: var(--button-hover);
+      transform: scale(1.05);
+    }
+    /* Responsive tweaks */
+    @media only screen and (max-width: 600px) {
+      .action-button {
+        font-size: calc(0.9em + 1vw);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Page 1: User Details Input -->
+  <div id="page1" class="page active">
+    <form id="userForm">
+      <h2>Welcome! 😊</h2>
+      <p>Please enter your full name and choose your gender.</p>
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <br />
+      <select id="gender" required>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+      <br />
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+
+  <!-- Page 2: Valentine Question (for females) -->
+  <div id="page2" class="page">
+    <h2>Will You be my Valentine? 💝</h2>
+    <p>Choose your answer below:</p>
+    <div class="button-row">
+      <div id="yesContainer" class="button-cell">
+        <button id="yesBtn" class="action-button"></button>
+      </div>
+      <div id="noContainer" class="button-cell">
+        <button id="noBtn" class="action-button"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page 3: Thank You for Valentine (for females) -->
+  <div id="page3" class="page">
+    <h2>Thank you for choosing me as your Valentine! 😘</h2>
+  </div>
+
+  <!-- Page 4: Thank You Message (for males) -->
+  <div id="page4" class="page">
+    <h2>Thank you for being my friend and spending your time to review the page! 😊</h2>
+  </div>
+
+  <script>
+    // Replace the displayed URL with "are-you-sure" using the History API.
+    window.addEventListener('load', function() {
+      // This updates the browser’s URL (as allowed) to show “/are-you-sure”
+      history.replaceState(null, "are you sure", "/are-you-sure");
+    });
+
+    // Prevent navigation away from this page until the task is finished
+    let taskCompleted = false;
+    window.addEventListener("beforeunload", function (e) {
+      if (!taskCompleted) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
+    // Function to show a specific page by ID
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach((page) => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
+    }
+
+    // Updated chance texts based on your new specifications.
+    const chanceData = [
+      {
+        yesText: " Yes 😸 Yeepee",
+        noText: " No😟 You sure?"
+      },
+      {
+        yesText: "Are we soulmates? 👫 Let’s find out together! 😊 - Pick Yes",
+        noText: "🥲 Rethink your choice for a second. Would you really want to miss out on a guy like me? - Pick No"
+      },
+      {
+        yesText: "I promise unlimited cuddles 🥰 if you say yes! 🤗 - Pick Yes",
+        noText: "🥺 Why are you in so much hurry? - No"
+      },
+      {
+        yesText: "You + Me = Perfect 💕 Let’s make it official? 😍 - Pick Yes",
+        noText: "😥 Are you sure take your time and think about it a bit - Pick No"
+      },
+      {
+        yesText: "Life’s sweeter with you 🍭, so say yes? 😘 - Pick Yes",
+        noText: "😢 I am not that bad - Pick No."
+      },
+      {
+        yesText: "You sure about not choosing me? We can eat puchka and then have ice cream though 😏",
+        noText: ""
+      }
+    ];
+
+    // Initialize chance counter (0 means chance 1)
+    let noClickCount = 0;
+    // Set initial texts for Page 2 buttons (chance 1)
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const yesContainer = document.getElementById("yesContainer");
+    const noContainer = document.getElementById("noContainer");
+    yesBtn.textContent = chanceData[0].yesText;
+    noBtn.textContent = chanceData[0].noText;
+    // Start with both flex cells equal
+    yesContainer.style.flexGrow = 1;
+    noContainer.style.flexGrow = 1;
+
+    // Handle form submission on Page 1
+    document.getElementById("userForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const fullName = document.getElementById("fullName").value;
+      const gender = document.getElementById("gender").value;
+      localStorage.setItem("fullName", fullName);
+      localStorage.setItem("gender", gender);
+      // If user is male, record data and go to Page 4; otherwise, go to Page 2
+      if (gender === "male") {
+        sendDataToGoogleSheet({ fullName, gender, noClicks: 0 });
+        showPage("page4");
+        taskCompleted = true;
+      } else if (gender === "female") {
+        showPage("page2");
+      }
+    });
+
+    // Handle click on the "Yes" button (Page 2)
+    yesBtn.addEventListener("click", function () {
+      const fullName = localStorage.getItem("fullName");
+      const gender = localStorage.getItem("gender");
+      // Send data including the number of "No" clicks before finally choosing "Yes"
+      sendDataToGoogleSheet({ fullName, gender, noClicks: noClickCount });
+      showPage("page3");
+      taskCompleted = true;
+    });
+
+    // Handle click on the "No" button (Page 2)
+    noBtn.addEventListener("click", function () {
+      noClickCount++;
+      // If not yet on final chance (final chance after 5 "No" clicks = index 5)
+      if (noClickCount < chanceData.length - 1) {
+        // Update the button texts for the current chance
+        yesBtn.textContent = chanceData[noClickCount].yesText;
+        noBtn.textContent = chanceData[noClickCount].noText;
+        // Increase the flex-grow of the Yes container using the golden ratio multiplier
+        let newFlexGrow = Math.pow(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--golden")), noClickCount);
+        yesContainer.style.flexGrow = newFlexGrow;
+      } else {
+        // Final chance: hide the No button cell
+        yesBtn.textContent = chanceData[noClickCount].yesText;
+        noContainer.style.display = "none";
+        // Make the Yes container take the full width of the button row
+        yesContainer.style.flexGrow = 1;
+        yesContainer.style.width = "100%";
+        // Animate the Yes button to expand to cover the full area
+        yesBtn.style.transition = "all 0.5s ease";
+        yesBtn.style.width = "100%";
+        yesBtn.style.height = "100%";
+        yesBtn.style.fontSize = "3em";
+      }
+    });
+
+    // Function to send collected data to a Google Spreadsheet via a Google Apps Script Web App
+    function sendDataToGoogleSheet(data) {
+      // Replace the URL below with your actual Google Apps Script endpoint URL
+      const scriptURL = "https://script.google.com/macros/s/AKfycbzrIJHkAhc-ckQ9mKHAl59Z5z8ctVyOk1BJQoqemshungx3DQvqOfsLHYbcOMW_FcdxtA/exec";
+      fetch(scriptURL, { method: "POST", body: JSON.stringify(data) })
+        .then((response) => console.log("Data sent successfully:", response))
+        .catch((error) => console.error("Error!", error.message));
+    }
+  </script>
+</body>
+</html>
